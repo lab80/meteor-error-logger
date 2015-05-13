@@ -24,8 +24,7 @@ ErrorLogger =
           lineNumber: line
           columnNumber: column
           stack: error.stack
-      log = JSON.stringify(log)
-      $.post(LOG_ROUTE, log, (resp) ->
+      self._postLog(log, (err, resp) ->
         console.log "JS_LOG_OK"
       )
 
@@ -46,8 +45,7 @@ ErrorLogger =
           responseHeaders: xhr.getAllResponseHeaders()
           responseTime: responseTime
 
-      log = JSON.stringify(log)
-      $.post(LOG_ROUTE, log, (resp) ->
+      self._postLog(log, (err, resp) ->
         console.log "AJAX_LOG_OK"
       )
     )
@@ -65,9 +63,20 @@ ErrorLogger =
       location: location.href
       details:
         message: message
-    log = JSON.stringify(log)
-    $.post(LOG_ROUTE, log, (resp) ->
+    @_postLog(log, (err, resp) ->
       console.log "MANUAL_LOG_OK"
+    )
+
+  _postLog: (log, callback) ->
+    logString = EJSON.stringify(log)
+    headers =
+      "Content-Type": "text/ejson"
+
+    HTTP.post(LOG_ROUTE, {
+      content: logString
+      headers: headers,
+    }, (err, res) ->
+      callback(err, res) if callback
     )
 
   getBrowserData: ->
