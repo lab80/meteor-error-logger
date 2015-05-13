@@ -5,14 +5,18 @@ Package.describe({
   git: "https://github.com/lab80/meteor-error-logger"
 });
 
+Npm.depends({
+  "body-parser": "1.10.1"
+});
+
 Package.on_use(function (api, where) {
   api.versionsFrom('METEOR@0.9.2');
 
-  api.use(['underscore', 'jquery', 'coffeescript'], ['client']);
+  api.use(['underscore', 'jquery', 'coffeescript', 'http'], ['client']);
   api.addFiles('error_logger_client.coffee', 'client');
   api.export('ErrorLogger', 'client');
 
-  api.use(['underscore', 'coffeescript', 'mongo', 'email', 'ejson', 'iron:router@1.0.1'], ['server']);
+  api.use(['underscore', 'coffeescript', 'mongo', 'email', 'ejson', 'meteorhacks:picker'], ['server']);
   api.addFiles('error_logger_server.coffee', 'server');
   api.export('ErrorLogger', 'server');
 });

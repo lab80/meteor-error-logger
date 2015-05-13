@@ -10,8 +10,7 @@ ErrorLogger =
   log: (request) ->
     error = null
     unless _.isEmpty(request.body)
-      body = _.keys(request.body)[0]
-      body = EJSON.parse(body)
+      body = EJSON.parse(request.body)
 
       if body.errorType of ERROR_TYPE_TO_SUBJECT_GETTER
         error = _.pick(body, ERROR_FIELDS)
@@ -20,6 +19,7 @@ ErrorLogger =
 
     error.ipAddress = request.headers['x-forwarded-for'] or request.connection.remoteAddress
     error.timestamp = new Date()
+
     ErrorLogger._collection.insert(error)
 
     from = process.env.ERROR_EMAIL_FROM
@@ -31,9 +31,16 @@ ErrorLogger =
       Email.send(from: from, to: to, subject: subject, text: text)
     "#{error.errorType} OK"
 
-Router.map(->
-  @route('errorlog', path: LOG_ROUTE, where: 'server')
-    .post(->
-      @response.end(ErrorLogger.log(@request))
-    )
+bodyParser = Npm.require('body-parser')
+errorRoute = Picker.filter((request, res) ->
+  request.method is 'POST' and request.url is LOG_ROUTE
 )
+
+errorRoute.middleware(bodyParser.text(
+  type: "text/ejson"
+))
+
+errorRoute.route(LOG_ROUTE, (params, request, response) ->
+  response.end(ErrorLogger.log(request))
+)
+
