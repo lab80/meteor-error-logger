@@ -4,6 +4,7 @@ ERROR_TYPE_TO_SUBJECT_GETTER =
   JS: (error) -> error.details.message
   MANUAL: (error) -> error.details.message
   AJAX: (error) -> error.details.xhrStatusText
+  METEOR: (error) -> error.details.message
 
 ErrorLogger =
   _collection: new Mongo.Collection('errorlogs')
@@ -43,4 +44,3 @@ errorRoute.middleware(bodyParser.text(
 errorRoute.route(LOG_ROUTE, (params, request, response) ->
   response.end(ErrorLogger.log(request))
 )
-

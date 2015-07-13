@@ -1,4 +1,12 @@
 LOG_ROUTE = '/errorlog'
+_stackRegex = /^\s+at\s.+$/gm
+_getStackFromMessage = (message) ->
+  # add empty string to add the empty line at start
+  stack = ['']
+  while (match = _stackRegex.exec(message))
+    stack.push(match[0])
+  stack.join('\n')
+_firstLine = (message) -> _.first(message.split('\n'))
 
 ErrorLogger =
   init: ->
@@ -10,6 +18,27 @@ ErrorLogger =
       beforeSend: (xhr, settings) ->
         settings.requestSentTime = Date.now()
     )
+
+    _originalMeteorDebug = Meteor._debug
+    Meteor._debug = (message, stack) ->
+      if message instanceof Error
+        stack = message.stack
+        message = message.message
+      else if (_.isString(message) or message) and _.isUndefined(stack)
+        stack = _getStackFromMessage(message)
+        message = _firstLine(message)
+
+      log =
+        errorType: 'METEOR'
+        browser: self.getBrowserData()
+        location: location.href
+        details:
+          message: message
+          stack: stack
+      self._postLog(log, (err, resp) ->
+        console.log if err then err else "METEOR_LOG_OK"
+      )
+      _originalMeteorDebug.apply(this, arguments)
 
     window.onerror = (message, file, line, column, error) ->
       # Ignore if msg is the following
@@ -25,7 +54,7 @@ ErrorLogger =
           columnNumber: column
           stack: error.stack
       self._postLog(log, (err, resp) ->
-        console.log "JS_LOG_OK"
+        console.log if err then err else "JS_LOG_OK"
       )
 
     # This catches all errors in ajax calls
@@ -46,7 +75,7 @@ ErrorLogger =
           responseTime: responseTime
 
       self._postLog(log, (err, resp) ->
-        console.log "AJAX_LOG_OK"
+        console.log if err then err else "AJAX_LOG_OK"
       )
     )
 
@@ -64,7 +93,7 @@ ErrorLogger =
       details:
         message: message
     @_postLog(log, (err, resp) ->
-      console.log "MANUAL_LOG_OK"
+      console.log if err then err else "MANUAL_LOG_OK"
     )
 
   _postLog: (log, callback) ->
