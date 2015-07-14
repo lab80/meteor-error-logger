@@ -19,26 +19,27 @@ ErrorLogger =
         settings.requestSentTime = Date.now()
     )
 
-    _originalMeteorDebug = Meteor._debug
-    Meteor._debug = (message, stack) ->
-      if message instanceof Error
-        stack = message.stack
-        message = message.message
-      else if (_.isString(message) or message) and _.isUndefined(stack)
-        stack = _getStackFromMessage(message)
-        message = _firstLine(message)
+    unless Meteor.settings?.public?.preserveMeteorDebug
+      _originalMeteorDebug = Meteor._debug
+      Meteor._debug = (message, stack) ->
+        if message instanceof Error
+          stack = message.stack
+          message = message.message
+        else if (_.isString(message) or message) and _.isUndefined(stack)
+          stack = _getStackFromMessage(message)
+          message = _firstLine(message)
 
-      log =
-        errorType: 'METEOR'
-        browser: self.getBrowserData()
-        location: location.href
-        details:
-          message: message
-          stack: stack
-      self._postLog(log, (err, resp) ->
-        console.log if err then err else "METEOR_LOG_OK"
-      )
-      _originalMeteorDebug.apply(this, arguments)
+        log =
+          errorType: 'METEOR'
+          browser: self.getBrowserData()
+          location: location.href
+          details:
+            message: message
+            stack: stack
+        self._postLog(log, (err, resp) ->
+          console.log if err then err else "METEOR_LOG_OK"
+        )
+        _originalMeteorDebug.apply(this, arguments)
 
     window.onerror = (message, file, line, column, error) ->
       # Ignore if msg is the following
