@@ -1,3 +1,5 @@
+REPETITIVE_ERRORS =
+  "Connection timeout. No sockjs heartbeat received."
 LOG_ROUTE = '/errorlog'
 ERROR_FIELDS = ['errorType', 'ipAddress', 'location', 'browser', 'details']
 ERROR_TYPE_TO_SUBJECT_GETTER =
@@ -5,6 +7,9 @@ ERROR_TYPE_TO_SUBJECT_GETTER =
   MANUAL: (error) -> error.details.message
   AJAX: (error) -> error.details.xhrStatusText
   METEOR: (error) -> error.details.message
+
+_isRepetitiveError = (error) ->
+  _.has(REPETITIVE_ERRORS, error.details.message)
 
 ErrorLogger =
   _collection: new Mongo.Collection('errorlogs')
@@ -23,13 +28,15 @@ ErrorLogger =
 
     ErrorLogger._collection.insert(error)
 
-    from = process.env.ERROR_EMAIL_FROM
-    to = process.env.ERROR_EMAIL_TO
-    if from and to
-      text = EJSON.stringify(error, indent: true)
-      subject = ERROR_TYPE_TO_SUBJECT_GETTER[error.errorType](error)
-      subject = "[Front error] #{error.errorType}: #{subject}"
-      Email.send(from: from, to: to, subject: subject, text: text)
+    unless _isRepetitiveError(error)
+      from = process.env.ERROR_EMAIL_FROM
+      to = process.env.ERROR_EMAIL_TO
+      if from and to
+        text = EJSON.stringify(error, indent: true)
+        subject = ERROR_TYPE_TO_SUBJECT_GETTER[error.errorType](error)
+        subject = "[Front error] #{error.errorType}: #{subject}"
+        Email.send(from: from, to: to, subject: subject, text: text)
+
     "#{error.errorType} OK"
 
 bodyParser = Npm.require('body-parser')
