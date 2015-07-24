@@ -1,6 +1,7 @@
-REPETITIVE_ERRORS =
+REPETITIVE_ERRORS = [
   "Connection timeout. No sockjs heartbeat received."
   "TypeError: Cannot read property 'invalidate' of undefined"
+]
 LOG_ROUTE = '/errorlog'
 ERROR_FIELDS = ['errorType', 'ipAddress', 'location', 'browser', 'details']
 ERROR_TYPE_TO_SUBJECT_GETTER =
