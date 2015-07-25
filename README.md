@@ -31,7 +31,7 @@ setup settings.json file to your application.
     "suppressedErrors": [
       {
         "subject": "Connection timeout. No sockjs heartbeat received.",
-        "reason": "Usaully it occurs when user's network status is unstable for some reason"
+        "reason": "Usually it occurs when user's network status is unstable for some reason"
       }
     ]
   }
