@@ -38,8 +38,7 @@ setup settings.json file to your application.
 }
 ```
 
-Practically ```reason``` is not related to the function, but it helps to track errors.
-```subject``` is the error.details.message thrown by Meteor
+Each error's ```subject``` is the error.details.message thrown by Meteor and ```reason``` is not actually related to the function, but it helps to track errors.
 
 ## Known Limitations
 
