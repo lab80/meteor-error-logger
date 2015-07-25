@@ -23,7 +23,7 @@ ErrorLogger.manualLog("your message here")
 ## Prevent from sending email for certain errors
 
 To prevent it from sending email for certain errors such as network speed related issue,
-setup settings.json file to your application.
+setup ```settings.json``` file to your application.
 
 ```json
 {
