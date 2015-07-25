@@ -1,4 +1,4 @@
-REPETITIVE_ERRORS = Meteor.settings.repetitiveErrorLogs or {}
+SUPPRESSED_ERRORS = _.map(Meteor.settings?.errors?.suppressedErrors or {}, (e) -> e.subject)
 LOG_ROUTE = '/errorlog'
 ERROR_FIELDS = ['errorType', 'ipAddress', 'location', 'browser', 'details']
 ERROR_TYPE_TO_SUBJECT_GETTER =
@@ -6,8 +6,8 @@ ERROR_TYPE_TO_SUBJECT_GETTER =
   MANUAL: (error) -> error.details.message
   AJAX: (error) -> error.details.xhrStatusText
   METEOR: (error) -> error.details.message
-_isRepetitiveError = (error) ->
-  _.has(REPETITIVE_ERRORS, error.details.message.trim())
+_isSuppressedError = (error) ->
+  _.has(SUPPRESSED_ERRORS, error.details.message.trim())
 
 ErrorLogger =
   _collection: new Mongo.Collection('errorlogs')
@@ -26,7 +26,7 @@ ErrorLogger =
 
     ErrorLogger._collection.insert(error)
 
-    unless _isRepetitiveError(error)
+    unlSuppressedError(error)
       from = process.env.ERROR_EMAIL_FROM
       to = process.env.ERROR_EMAIL_TO
       if from and to
