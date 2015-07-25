@@ -26,7 +26,7 @@ ErrorLogger =
 
     ErrorLogger._collection.insert(error)
 
-    unlSuppressedError(error)
+    if _isSuppressedError(error)
       from = process.env.ERROR_EMAIL_FROM
       to = process.env.ERROR_EMAIL_TO
       if from and to
