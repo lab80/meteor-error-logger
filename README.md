@@ -20,6 +20,26 @@ To log a custom error:
 ErrorLogger.manualLog("your message here")
 ```
 
+## Prevent from sending email for certain errors
+
+To prevent it from sending email for certain errors such as network speed related issue,
+setup ```settings.json``` file to your application.
+
+```json
+{
+  "errors": {
+    "suppressedErrors": [
+      {
+        "subject": "Connection timeout. No sockjs heartbeat received.",
+        "reason": "Usually it occurs when user's network status is unstable for some reason"
+      }
+    ]
+  }
+}
+```
+
+Each error's ```subject``` is the error.details.message thrown by Meteor and ```reason``` is not actually related to the function, but it helps to track errors.
+
 ## Known Limitations
 
  - [ ] There is currently no UI for aggregating the errors.
