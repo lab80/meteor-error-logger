@@ -1,7 +1,4 @@
-REPETITIVE_ERRORS = [
-  "Connection timeout. No sockjs heartbeat received."
-  "TypeError: Cannot read property 'invalidate' of undefined"
-]
+REPETITIVE_ERRORS = Meteor.settings.repetitiveErrorLogs or {}
 LOG_ROUTE = '/errorlog'
 ERROR_FIELDS = ['errorType', 'ipAddress', 'location', 'browser', 'details']
 ERROR_TYPE_TO_SUBJECT_GETTER =
@@ -9,9 +6,8 @@ ERROR_TYPE_TO_SUBJECT_GETTER =
   MANUAL: (error) -> error.details.message
   AJAX: (error) -> error.details.xhrStatusText
   METEOR: (error) -> error.details.message
-
 _isRepetitiveError = (error) ->
-  _.has(REPETITIVE_ERRORS, error.details.message)
+  _.has(REPETITIVE_ERRORS, error.details.message.trim())
 
 ErrorLogger =
   _collection: new Mongo.Collection('errorlogs')
