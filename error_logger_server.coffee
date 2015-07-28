@@ -1,4 +1,4 @@
-SUPPRESSED_ERRORS = _.map(Meteor.settings?.errors?.suppressedErrors or {}, (e) -> e.subject)
+SUPPRESSED_ERRORS = _.map(Meteor.settings?.errors?.suppressedErrors or [], (e) -> e.subject)
 LOG_ROUTE = '/errorlog'
 ERROR_FIELDS = ['errorType', 'ipAddress', 'location', 'browser', 'details']
 ERROR_TYPE_TO_SUBJECT_GETTER =
@@ -7,7 +7,7 @@ ERROR_TYPE_TO_SUBJECT_GETTER =
   AJAX: (error) -> error.details.xhrStatusText
   METEOR: (error) -> error.details.message
 _isSuppressedError = (error) ->
-  _.has(SUPPRESSED_ERRORS, error.details.message.trim())
+  _.contains(SUPPRESSED_ERRORS, error.details.message.trim())
 
 ErrorLogger =
   _collection: new Mongo.Collection('errorlogs')
