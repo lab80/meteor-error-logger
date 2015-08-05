@@ -12,7 +12,7 @@ Npm.depends({
 Package.on_use(function (api, where) {
   api.versionsFrom('METEOR@0.9.2');
 
-  api.use(['underscore', 'jquery', 'coffeescript', 'http'], ['client']);
+  api.use(['underscore', 'jquery', 'coffeescript', 'faisalman:ua-parser-js'], ['client']);
   api.addFiles('error_logger_client.coffee', 'client');
   api.export('ErrorLogger', 'client');
 
