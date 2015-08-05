@@ -95,7 +95,7 @@ ErrorLogger =
         message: message
     @_postLog(log, (err, resp) ->
       # DEBUG LINE
-      console.log log
+      # console.log log
       console.log if err then err else "MANUAL_LOG_OK"
     )
 
