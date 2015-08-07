@@ -94,6 +94,8 @@ ErrorLogger =
       details:
         message: message
     @_postLog(log, (err, resp) ->
+      # DEBUG LINE
+      # console.log log
       console.log if err then err else "MANUAL_LOG_OK"
     )
 
@@ -110,11 +112,12 @@ ErrorLogger =
     )
 
   getBrowserData: ->
-    browserData =
-      UA: navigator.userAgent
+    ua = new window.UAParser()
+    browserData = _.extend(ua.getResult(),
       platform: navigator.platform
       language: navigator.language
       cookieEnabled: navigator.cookieEnabled
+    )
 
 Meteor.startup(->
   ErrorLogger.init()
