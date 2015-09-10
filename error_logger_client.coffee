@@ -68,6 +68,7 @@ ErrorLogger =
         browser: self.getBrowserData()
         location: location.href
         details:
+          message: xhr.responseText
           xhrResponseText: xhr.responseText
           xhrStatusText: "#{xhr.status} #{xhr.statusText}"
           url: settings.url
