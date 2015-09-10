@@ -7,7 +7,7 @@ ERROR_TYPE_TO_SUBJECT_GETTER =
   AJAX: (error) -> error.details.xhrStatusText
   METEOR: (error) -> error.details.message
 _isSuppressedError = (error) ->
-  _.contains(SUPPRESSED_ERRORS, error.details.message.trim())
+  _.contains(SUPPRESSED_ERRORS, error.details.message?.trim())
 
 ErrorLogger =
   _collection: new Mongo.Collection('errorlogs')
