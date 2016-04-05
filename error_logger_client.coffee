@@ -101,7 +101,7 @@ ErrorLogger =
     )
 
   _postLog: (log, callback) ->
-    logString = EJSON.stringify(log)
+    logString = JSON.stringify(log)
     headers =
       "Content-Type": "text/ejson"
 
