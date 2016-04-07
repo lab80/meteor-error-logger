@@ -9,8 +9,11 @@ ERROR_TYPE_TO_SUBJECT_GETTER =
 _isSuppressedError = (error) ->
   _.contains(SUPPRESSED_ERRORS, error.details.message?.trim())
 
+ErrorLogs = new Mongo.Collection('errorlogs')
+ErrorLogs._ensureIndex({timestamp: 1}, {expireAfterSeconds: 3600 * 24 * 7})
+
 ErrorLogger =
-  _collection: new Mongo.Collection('errorlogs')
+  _collection: ErrorLogs
   log: (request) ->
     error = null
     unless _.isEmpty(request.body)
