@@ -10,9 +10,10 @@ $ meteor add lab80:error-logger
 ```
 
 To Use:
-on client side code
-```
+```js
+// Client side
 import {ErrorLogger} from 'meteor/lab80:error-logger'
+
 Meteor.startup(ErrorLogger.init)
 ```
 
