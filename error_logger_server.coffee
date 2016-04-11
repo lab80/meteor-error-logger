@@ -8,11 +8,12 @@ ERROR_TYPE_TO_SUBJECT_GETTER =
   METEOR: (error) -> error.details.message
 _isSuppressedError = (error) ->
   _.contains(SUPPRESSED_ERRORS, error.details.message?.trim())
-Collection = new Mongo.Collection('errorlogs')
-Collection._ensureIndex({timestamp: 1}, {expireAfterSeconds: 3600 * 24 * 7}) # Save for a week
+
+ErrorLogs = new Mongo.Collection('errorlogs')
+ErrorLogs._ensureIndex({timestamp: 1}, {expireAfterSeconds: 3600 * 24 * 7})
 
 ErrorLogger =
-  _collection: Collection
+  _collection: ErrorLogs
   log: (request) ->
     error = null
     unless _.isEmpty(request.body)
@@ -32,7 +33,7 @@ ErrorLogger =
       from = process.env.ERROR_EMAIL_FROM
       to = process.env.ERROR_EMAIL_TO
       if from and to
-        text = JSON.stringify(error, indent: true)
+        text = EJSON.stringify(error, indent: true)
         subject = ERROR_TYPE_TO_SUBJECT_GETTER[error.errorType](error)
         subject = "[Front error] #{error.errorType}: #{subject}"
         Email.send(from: from, to: to, subject: subject, text: text)

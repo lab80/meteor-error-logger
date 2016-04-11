@@ -9,6 +9,14 @@ To install:
 $ meteor add lab80:error-logger
 ```
 
+To Use:
+```js
+// Client side
+import {ErrorLogger} from 'meteor/lab80:error-logger'
+
+Meteor.startup(ErrorLogger.init)
+```
+
 ## Customization
 
 To have it send emails for each error, set the `ERROR_EMAIL_FROM` and

@@ -68,7 +68,7 @@ ErrorLogger =
         browser: self.getBrowserData()
         location: location.href
         details:
-          message: xhr.responseText
+          message: xhr.responseText || error
           xhrResponseText: xhr.responseText
           xhrStatusText: "#{xhr.status} #{xhr.statusText}"
           url: settings.url
@@ -119,7 +119,3 @@ ErrorLogger =
       language: navigator.language
       cookieEnabled: navigator.cookieEnabled
     )
-
-Meteor.startup(->
-  ErrorLogger.init()
-)
