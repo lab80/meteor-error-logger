@@ -8,13 +8,15 @@ ERROR_TYPE_TO_SUBJECT_GETTER =
   METEOR: (error) -> error.details.message
 _isSuppressedError = (error) ->
   _.contains(SUPPRESSED_ERRORS, error.details.message?.trim())
+Collection = new Mongo.Collection('errorlogs')
+Collection._ensureIndex({timestamp: 1}, {expireAfterSeconds: 3600 * 24 * 7}) # Save for a week
 
 ErrorLogger =
-  _collection: new Mongo.Collection('errorlogs')
+  _collection: Collection
   log: (request) ->
     error = null
     unless _.isEmpty(request.body)
-      body = JSON.parse(request.body)
+      body = EJSON.parse(request.body)
 
       if body.errorType of ERROR_TYPE_TO_SUBJECT_GETTER
         error = _.pick(body, ERROR_FIELDS)
