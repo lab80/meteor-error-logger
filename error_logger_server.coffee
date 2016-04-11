@@ -17,7 +17,7 @@ ErrorLogger =
   log: (request) ->
     error = null
     unless _.isEmpty(request.body)
-      body = JSON.parse(request.body)
+      body = EJSON.parse(request.body)
 
       if body.errorType of ERROR_TYPE_TO_SUBJECT_GETTER
         error = _.pick(body, ERROR_FIELDS)
@@ -33,7 +33,7 @@ ErrorLogger =
       from = process.env.ERROR_EMAIL_FROM
       to = process.env.ERROR_EMAIL_TO
       if from and to
-        text = JSON.stringify(error, indent: true)
+        text = EJSON.stringify(error, indent: true)
         subject = ERROR_TYPE_TO_SUBJECT_GETTER[error.errorType](error)
         subject = "[Front error] #{error.errorType}: #{subject}"
         Email.send(from: from, to: to, subject: subject, text: text)
